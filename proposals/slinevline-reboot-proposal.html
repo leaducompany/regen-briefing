@@ -1,0 +1,535 @@
+<title>S라인V라인 마케팅 리부트 제안서</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 결재 문서처럼 쌓이는 A4 시트. 좌측 여백 칼럼에 항목 번호(Ⅰ~Ⅵ), 우측에 본문. */
+:root {
+  --paper: #F7F4F2;
+  --sheet: #FFFFFF;
+  --ink: #2B211D;
+  --muted: #76665F;
+  --rule: #E7DEDA;
+  --rose: #A9506A;
+  --rose-soft: #F6E8EC;
+  --mauve: #7D6A9E;
+  --mauve-soft: #EFEBF5;
+  --stop: #9B8F8A;
+  --stop-soft: #F1EDEB;
+  --font-display: "Noto Serif KR", "Nanum Myeongjo", "Apple SD Gothic Neo", serif;
+  --font-body: "IBM Plex Sans KR", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --s-1: 12px; --s0: 14.5px; --s1: 16px; --s2: 19px; --s3: 24px; --s4: 32px; --s5: 42px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161113; --sheet: #211A1D; --ink: #F1E9E6; --muted: #B4A49E; --rule: #3A2F33;
+    --rose: #E68FA7; --rose-soft: #3A222A; --mauve: #B7A6D6; --mauve-soft: #2B2638;
+    --stop: #8F8380; --stop-soft: #2C2527; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161113; --sheet: #211A1D; --ink: #F1E9E6; --muted: #B4A49E; --rule: #3A2F33;
+  --rose: #E68FA7; --rose-soft: #3A222A; --mauve: #B7A6D6; --mauve-soft: #2B2638;
+  --stop: #8F8380; --stop-soft: #2C2527; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: var(--s0); line-height: 1.75;
+  word-break: keep-all; overflow-wrap: anywhere;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.doc { max-width: 880px; margin: 0 auto; display: grid; gap: 28px; }
+.sheet {
+  background: var(--sheet); border: 1px solid var(--rule);
+  padding: clamp(28px, 6vw, 64px) clamp(20px, 6vw, 68px);
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: var(--s4); line-height: 1.3; }
+h3 { font-size: var(--s2); line-height: 1.4; font-weight: 600; }
+p { margin: 0; max-width: 66ch; }
+strong { font-weight: 600; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.label {
+  font-family: var(--font-body); font-size: var(--s-1); font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ---------- Cover ---------- */
+.cover { display: grid; gap: 48px; padding-block: clamp(40px, 9vw, 96px); }
+.cover-top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cover-top .label:last-child { color: var(--rose); }
+.cover h1 { font-size: clamp(34px, 7vw, 56px); line-height: 1.22; }
+.cover h1 em { font-style: normal; color: var(--rose); }
+.cover .lede { font-size: var(--s1); color: var(--muted); max-width: 52ch; margin-top: 20px; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); border-top: 2px solid var(--ink); }
+.meta div { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--rule); display: grid; gap: 2px; min-width: 0; }
+.meta dt { font-size: var(--s-1); color: var(--muted); }
+.meta dd { margin: 0; font-weight: 500; }
+
+/* ---------- Section frame ---------- */
+.sec { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 0 28px; }
+.sec-no { font-family: var(--font-display); font-size: var(--s4); color: var(--rose); line-height: 1.3; font-weight: 500; }
+.sec-body { display: grid; gap: 28px; min-width: 0; }
+.sec-head { display: grid; gap: 10px; }
+.sec-head p { color: var(--muted); }
+@media (max-width: 640px) {
+  .sec { grid-template-columns: 1fr; gap: 6px; }
+  .sec-no { font-size: var(--s3); }
+}
+
+/* ---------- Tables ---------- */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: var(--s0); }
+th, td { text-align: left; vertical-align: top; padding: 13px 14px; border-bottom: 1px solid var(--rule); }
+thead th { font-size: var(--s-1); font-weight: 600; color: var(--muted); border-bottom: 1.5px solid var(--ink); letter-spacing: 0.04em; white-space: nowrap; }
+tbody th { font-weight: 600; white-space: nowrap; }
+td.price { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+.decision td, .decision th { padding-block: 18px; }
+.decision tbody tr.off td, .decision tbody tr.off th { color: var(--muted); }
+.decision .from { text-decoration: line-through; text-decoration-color: var(--stop); }
+
+.pill {
+  display: inline-block; font-size: 12px; font-weight: 600; line-height: 1;
+  padding: 6px 10px 5px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.02em;
+}
+.pill.stop { background: var(--stop-soft); color: var(--stop); }
+.pill.new { background: var(--rose); color: var(--sheet); }
+.pill.up { background: var(--rose-soft); color: var(--rose); }
+.pill.info { background: var(--mauve-soft); color: var(--mauve); }
+
+/* ---------- Summary strip ---------- */
+.verdict {
+  border-left: 3px solid var(--rose); padding: 4px 0 4px 20px;
+  font-family: var(--font-display); font-size: var(--s2); line-height: 1.6; font-weight: 500; max-width: 60ch;
+}
+
+/* ---------- Timeline ---------- */
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; }
+.timeline li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--rule); }
+.timeline li:last-child { border-bottom: 0; }
+.timeline time { font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding-top: 2px; font-variant-numeric: tabular-nums; }
+.timeline li.hot time { color: var(--rose); font-weight: 500; }
+@media (max-width: 480px) { .timeline li { grid-template-columns: 1fr; gap: 2px; } }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; border-block: 1px solid var(--rule); }
+.facts div { padding: 18px 18px 18px 0; display: grid; gap: 4px; min-width: 0; }
+.facts div + div { border-left: 1px solid var(--rule); padding-left: 18px; }
+@media (max-width: 640px) { .facts div + div { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; } }
+.facts b { font-family: var(--font-display); font-size: var(--s3); font-weight: 700; line-height: 1.3; }
+.facts span { font-size: 13px; color: var(--muted); }
+
+/* ---------- Product blocks ---------- */
+.product { display: grid; gap: 20px; padding-top: 28px; border-top: 1.5px solid var(--ink); }
+.product-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
+.product-head .qty { font-family: var(--font-display); font-size: var(--s3); font-weight: 700; color: var(--rose); white-space: nowrap; }
+.product-head .qty small { font-family: var(--font-body); font-size: var(--s0); color: var(--muted); font-weight: 500; margin-left: 6px; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px 36px; }
+.two > * { min-width: 0; }
+ul.ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+ul.ticks li { position: relative; padding-left: 18px; }
+ul.ticks li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 7px; height: 7px; border-radius: 50%; background: var(--rose); }
+ul.ticks.no li::before { background: transparent; border: 1.5px solid var(--stop); }
+.subhead { font-size: var(--s-1); font-weight: 600; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; }
+
+/* Thread mix bar — 20건 구성, 폭은 건수에 비례 */
+.mix { display: grid; gap: 12px; }
+.mix-bar { display: flex; height: 38px; border-radius: 4px; overflow: hidden; }
+.mix-bar span { display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--sheet); min-width: 0; }
+.mix-bar span:nth-child(1) { flex: 8; background: var(--rose); }
+.mix-bar span:nth-child(2) { flex: 5; background: color-mix(in srgb, var(--rose) 70%, var(--mauve)); }
+.mix-bar span:nth-child(3) { flex: 4; background: var(--mauve); }
+.mix-bar span:nth-child(4) { flex: 3; background: color-mix(in srgb, var(--mauve) 55%, var(--muted)); }
+.mix-legend { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; font-size: 13.5px; }
+.mix-legend li { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 10px; align-items: start; }
+.mix-legend i { width: 12px; height: 12px; border-radius: 2px; margin-top: 6px; }
+.mix-legend li:nth-child(1) i { background: var(--rose); }
+.mix-legend li:nth-child(2) i { background: color-mix(in srgb, var(--rose) 70%, var(--mauve)); }
+.mix-legend li:nth-child(3) i { background: var(--mauve); }
+.mix-legend li:nth-child(4) i { background: color-mix(in srgb, var(--mauve) 55%, var(--muted)); }
+.mix-legend b { font-weight: 600; }
+.mix-legend span { color: var(--muted); display: block; }
+
+/* Blog 3 → 5 */
+.scale { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 22px; height: 30px; border-radius: 3px; border: 1.5px solid var(--rose); }
+.dots i.on { background: var(--rose); }
+.dots i.add { background: var(--rose-soft); border-style: dashed; }
+.scale .arrow { color: var(--muted); font-size: 13.5px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips span { font-size: 13px; padding: 5px 11px; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); }
+
+/* ---------- Option box (기자단) ---------- */
+.option { background: var(--mauve-soft); padding: clamp(20px, 4vw, 32px); display: grid; gap: 18px; border-radius: 2px; }
+.option .label { color: var(--mauve); }
+.surg { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.surg div { background: var(--sheet); padding: 16px 18px; display: grid; gap: 4px; min-width: 0; }
+.surg b { font-family: var(--font-display); font-size: var(--s1); font-weight: 600; }
+.surg span { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.note { font-size: 13px; color: var(--muted); }
+.note b { color: var(--ink); font-weight: 600; }
+
+/* ---------- AEO/GEO ---------- */
+.tiers thead th:not(:first-child) { color: var(--ink); font-family: var(--font-display); font-size: var(--s1); letter-spacing: 0; }
+.tiers tbody th { color: var(--muted); font-weight: 500; }
+.tiers tr.fee td { font-size: var(--s1); font-weight: 600; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tiers .std { background: var(--rose-soft); }
+.tiers thead .std small { display: block; font-family: var(--font-body); font-size: 11px; color: var(--rose); font-weight: 600; letter-spacing: 0.04em; }
+
+.process { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; counter-reset: step; }
+.process li { counter-increment: step; padding: 14px 14px 14px 0; border-top: 2px solid var(--mauve); display: grid; gap: 4px; min-width: 0; }
+.process li::before { content: "STEP " counter(step); font-family: var(--font-mono); font-size: 11.5px; color: var(--mauve); letter-spacing: 0.06em; }
+.process b { font-weight: 600; }
+.process span { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+.caveat { font-size: 13px; color: var(--muted); display: grid; gap: 6px; padding-top: 18px; border-top: 1px solid var(--rule); }
+.caveat p { max-width: none; }
+
+/* ---------- Opinion ---------- */
+.opinion { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1.5px solid var(--ink); }
+.opinion div { padding: 20px 20px 20px 0; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.opinion div + div { border-left: 1px solid var(--rule); padding-left: 20px; }
+@media (max-width: 720px) { .opinion, .process { grid-template-columns: 1fr; } .mix-legend { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .opinion div + div { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; } }
+.opinion h3 { font-size: var(--s1); }
+.opinion p { font-size: 14px; color: var(--muted); }
+
+/* ---------- Next steps ---------- */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; }
+.steps li { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.steps li > span:first-child { font-size: 13.5px; color: var(--rose); font-weight: 500; padding-top: 2px; }
+@media (max-width: 480px) { .steps li { grid-template-columns: 1fr; gap: 2px; } }
+
+.sign { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 16px; padding-top: 12px; }
+.sign .who { font-family: var(--font-display); font-size: var(--s2); font-weight: 700; }
+.sign .label { color: var(--muted); }
+
+@media print {
+  body { background: #fff; padding: 0; }
+  .doc { gap: 0; max-width: none; }
+  .sheet { border: 0; break-after: page; padding: 18mm 16mm; }
+  .sheet:last-child { break-after: auto; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sheet { animation: rise .5s ease-out both; }
+  @keyframes rise { from { transform: translateY(6px); } to { transform: none; } }
+}
+</style>
+
+<main class="doc">
+
+  <!-- ===== COVER ===== -->
+  <section class="sheet cover" aria-label="표지">
+    <div class="cover-top">
+      <span class="label">LEADU COMPANY · 마케팅 제안서</span>
+      <span class="label">2026. 10. 14</span>
+    </div>
+    <div>
+      <h1>천안 S라인V라인의원<br>마케팅 <em>리부트</em> 제안</h1>
+      <p class="lede">반복되는 기자단 민원 신고에서 벗어나, 신고 리스크가 낮은 채널로 예산을 옮기는 대체상품 구성안과 AEO·GEO(AI 최적화 마케팅) 상품 소개를 함께 담았습니다.</p>
+    </div>
+    <dl class="meta">
+      <div><dt>수신</dt><dd>천안 S라인V라인의원 이지영 사무장님</dd></div>
+      <div><dt>발신</dt><dd>리드유컴퍼니 마케팅팀</dd></div>
+      <div><dt>근거</dt><dd>10월 13일 내부 전략회의 결론</dd></div>
+      <div><dt>구성</dt><dd>대체상품 제안 · AEO·GEO 견적 소개</dd></div>
+    </dl>
+  </section>
+
+  <!-- ===== I. SUMMARY ===== -->
+  <section class="sheet sec" aria-labelledby="s1">
+    <div class="sec-no">Ⅰ</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <span class="label">요약</span>
+        <h2 id="s1">한 장으로 보는 변경안</h2>
+      </div>
+      <p class="verdict">기자단은 중단하고, 그 자리를 스레드 신규 운영과 상위노출 블로그 확대로 채웁니다. AEO·GEO는 견적과 상품 구성만 안내드립니다.</p>
+      <div class="tbl-wrap">
+        <table class="decision">
+          <thead><tr><th>구분</th><th>현행</th><th>변경</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr class="off">
+              <th>블로그 기자단</th>
+              <td class="from">세르프·울쎄라 등 시술 중심 운영</td>
+              <td>신규 발행 중단</td>
+              <td><span class="pill stop">중단</span></td>
+            </tr>
+            <tr>
+              <th>스레드(Threads)</th>
+              <td>미운영</td>
+              <td><strong>월 20건</strong> 정보성 콘텐츠 운영</td>
+              <td><span class="pill new">신규</span></td>
+            </tr>
+            <tr>
+              <th>상위노출 블로그</th>
+              <td><span class="num">3</span>건 진행 중</td>
+              <td><strong><span class="num">5</span>건</strong>으로 확대, 전 원고 정보성 작성</td>
+              <td><span class="pill up">확대</span></td>
+            </tr>
+            <tr>
+              <th>AEO·GEO</th>
+              <td>미운영</td>
+              <td>상품 소개 및 견적 안내 (도입은 보류 권장)</td>
+              <td><span class="pill info">소개</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== II. BACKGROUND ===== -->
+  <section class="sheet sec" aria-labelledby="s2">
+    <div class="sec-no">Ⅱ</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <span class="label">배경</span>
+        <h2 id="s2">기자단을 멈추는 이유</h2>
+        <p>기자단 포스팅은 상위노출 성과가 꾸준했지만, 상단에 오른 글만 골라 보건소로 신고하는 경쟁 병원의 조직적 민원이 올해 들어 계속 늘었습니다. 성과가 좋을수록 신고 표적이 되는 구조입니다.</p>
+      </div>
+
+      <ol class="timeline">
+        <li><time>2026. 상반기</time><div>상단 노출된 기자단 포스팅만 선별한 보건소 직접 신고가 반복되기 시작</div></li>
+        <li><time>2026. 07</time><div>경쟁 병원의 지속적인 공격으로 기자단 작업 차질 (7월 보고서 공유)</div></li>
+        <li class="hot"><time>2026. 09. 09</time><div>보건소 광고 관련 메일 접수, 상단 노출 포스팅 2건 비공개 처리</div></li>
+        <li class="hot"><time>2026. 09. 10</time><div>추가 민원 접수, 6건 추가 비공개 처리. 하루 수 건 단위의 민원 확인</div></li>
+        <li class="hot"><time>2026. 10. 02</time><div>기자단 포스팅 22건 비공개 요청, 플레이스 전후사진 게시 중단</div></li>
+        <li class="hot"><time>2026. 10. 12</time><div>보건소 민원 메일 재접수</div></li>
+      </ol>
+
+      <div class="facts">
+        <div><b>22건</b><span>10월 초 한 번에 비공개 처리한 기자단 포스팅</span></div>
+        <div><b>51%</b><span>9월 말 블로그 전체 유입 중 검색 유입 비중</span></div>
+        <div><b>2건 승인</b><span>의료광고 사전심의 통과 후 재공개 (10월 12일)</span></div>
+      </div>
+      <p>반면 세부 키워드를 여러 개 선점하는 상위노출 블로그는 신고 이슈 없이 검색 유입을 안정적으로 만들고 있습니다. 8월 유입 1위 키워드는 ‘천안 실리프팅 잘하는 곳’이었고, 9월에는 ‘천안 세르프’, ‘천안 실리프팅 가격·후기’가 상위 유입 키워드였습니다. 이번 제안은 이 검증된 채널을 키우고, 신고 표적이 되기 어려운 채널을 새로 여는 데 초점을 맞췄습니다.</p>
+    </div>
+  </section>
+
+  <!-- ===== III. ALTERNATIVES ===== -->
+  <section class="sheet sec" aria-labelledby="s3">
+    <div class="sec-no">Ⅲ</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <span class="label">대체상품</span>
+        <h2 id="s3">기자단 예산의 새 자리</h2>
+      </div>
+
+      <!-- Threads -->
+      <article class="product" aria-labelledby="p1">
+        <div class="product-head">
+          <h3 id="p1">신규 · 스레드(Threads) 운영</h3>
+          <span class="qty">월 20건<small>주 4~5건 발행</small></span>
+        </div>
+        <p>스레드는 검색이 아니라 피드와 대화로 퍼지는 채널입니다. 경쟁 병원이 키워드 순위를 보고 표적을 고르는 네이버 구조와 달리, 짧은 정보성 글과 댓글 소통으로 원장님의 전문성을 꾸준히 쌓을 수 있습니다. 인스타그램과 계정이 연결되어 2040 여성 고객층에 닿기 쉽다는 점도 장점입니다.</p>
+
+        <div class="mix" role="img" aria-label="스레드 월 20건 콘텐츠 구성: 시술·수술 Q&A 8건, 회복·관리 팁 5건, 원장 진료철학 4건, 지역·시즌 이슈 3건">
+          <div class="mix-bar" aria-hidden="true"><span>8</span><span>5</span><span>4</span><span>3</span></div>
+          <ul class="mix-legend">
+            <li><i></i><div><b>시술·수술 Q&amp;A 8건</b><span>지방흡입·실리프팅·거상 관련 자주 받는 질문</span></div></li>
+            <li><i></i><div><b>회복·관리 팁 5건</b><span>붓기, 압박복, 고압산소 챔버 등 사후관리</span></div></li>
+            <li><i></i><div><b>진료철학 4건</b><span>안전한 지방흡입을 택한 이유 등 원장님 시선</span></div></li>
+            <li><i></i><div><b>지역·시즌 3건</b><span>천안·아산 생활권, 계절별 체형 관리 이슈</span></div></li>
+          </ul>
+        </div>
+
+        <div class="two">
+          <div>
+            <div class="subhead">운영 방식</div>
+            <ul class="ticks">
+              <li>병원 공식 계정 개설 및 프로필·소개 문구 세팅</li>
+              <li>월간 콘텐츠 캘린더 사전 공유 후 검수 반영</li>
+              <li>댓글·질문 응대 가이드 제공</li>
+              <li>월간 보고서에 조회·반응·팔로워 추이 포함</li>
+            </ul>
+          </div>
+          <div>
+            <div class="subhead">작성 원칙</div>
+            <ul class="ticks no">
+              <li>전후사진, 가격·할인, 체험 후기형 표현 사용하지 않음</li>
+              <li>치료 효과를 단정하거나 다른 병원과 비교하지 않음</li>
+              <li>의료광고 심의 기준에 맞춘 정보 전달 중심</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- Blog -->
+      <article class="product" aria-labelledby="p2">
+        <div class="product-head">
+          <h3 id="p2">확대 · 상위노출 블로그</h3>
+          <span class="qty">3건 → 5건<small>+2건 추가</small></span>
+        </div>
+        <div class="scale" aria-label="현행 3건에서 5건으로 확대">
+          <div class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="add"></i><i class="add"></i></div>
+          <span class="arrow">현행 3건 + 신규 2건</span>
+        </div>
+        <p>현재 성과가 나고 있는 세부 키워드 선점 방식을 그대로 확장합니다. 늘어나는 2건은 기자단이 맡던 대표 시술 주제를 정보성 원고로 옮겨 받고, 전 원고를 정보성으로 작성해 신고 빌미를 줄입니다.</p>
+        <div class="two">
+          <div>
+            <div class="subhead">키워드 운영</div>
+            <ul class="ticks">
+              <li>검색량은 적어도 병원을 고르는 단계의 세부 키워드 우선</li>
+              <li>한 글이 가격·후기·잘하는 곳 등 연관 키워드까지 함께 노출되도록 설계</li>
+              <li>필요한 원고는 의료광고 사전심의를 거쳐 발행</li>
+            </ul>
+          </div>
+          <div>
+            <div class="subhead">확장 지역</div>
+            <div class="chips">
+              <span>천안</span><span>아산</span><span>탕정</span><span>두정동</span><span>불당동</span><span>신부동</span><span>천안아산역</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== IV. JOURNALIST OPTION ===== -->
+  <section class="sheet sec" aria-labelledby="s4">
+    <div class="sec-no">Ⅳ</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <span class="label">선택 옵션</span>
+        <h2 id="s4">기자단을 이어가신다면</h2>
+      </div>
+      <div class="option">
+        <span class="label">추천 방향 · 피부과 시술 → 성형외과 수술</span>
+        <p>기자단을 계속 운영하길 원하시면, 지금의 피부과 시술(세르프·울쎄라·스킨부스터 등) 대신 <strong>눈·이마 성형외과 수술 위주</strong>로 주제를 바꾸는 방식을 제안드립니다. 시술 키워드는 피부과 간 경쟁과 상호 신고가 가장 치열한 영역입니다. 반면 수술 키워드는 천안 지역에서 다루는 병원이 적고, 상담 전 정보를 오래 찾아보는 중년 고객층이 많아 기자단 포스팅의 효과가 상대적으로 좋습니다.</p>
+        <div class="surg">
+          <div><b>이마거상</b><span>내시경 이마거상 중심. 눈과 눈썹 사이가 가까운 경우를 다룸</span></div>
+          <div><b>하안검</b><span>중년 눈밑 처짐·지방 고민 중심의 꾸준한 수요 키워드</span></div>
+          <div><b>상안검</b><span>원내 방식에 맞춰 눈썹하거상(눈썹 절제) 중심으로 소개</span></div>
+        </div>
+        <p class="note"><b>운영 시 유의사항</b> 수술 주제도 신고 가능성이 사라지지는 않으므로, 발행 수량을 줄이고 심의 승인 원고 위주로 진행하는 것을 권장합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== V. AEO/GEO ===== -->
+  <section class="sheet sec" aria-labelledby="s5">
+    <div class="sec-no">Ⅴ</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <span class="label">상품 소개 · 견적</span>
+        <h2 id="s5">AEO·GEO (AI 최적화 마케팅)</h2>
+        <p>ChatGPT·Gemini·Claude·Perplexity 같은 AI 검색에서 병원과 의료진 정보가 더 잘 발견되고, 정확하게 이해되고, 답변에 참고되도록 홈페이지·전문 콘텐츠·외부 신뢰자료·AI 검색 모니터링을 함께 관리하는 월 정기 상품입니다.</p>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="tiers">
+          <thead>
+            <tr><th>구분</th><th>BASIC</th><th class="std">STANDARD<small>리드유 표준 추천</small></th><th>PREMIUM</th></tr>
+          </thead>
+          <tbody>
+            <tr class="fee"><th>월 관리비</th><td>3,500,000원</td><td class="std">5,500,000원</td><td>8,000,000원</td></tr>
+            <tr><th>목표</th><td>AI가 읽고 이해할 수 있는 병원 만들기</td><td class="std">AI가 참고할 병원 전문자료를 매월 확대</td><td>주요 진료과목의 AI 검색 영역 선점</td></tr>
+            <tr><th>AI 검색용 전문 콘텐츠</th><td>월 4건</td><td class="std">월 8건</td><td>월 12건</td></tr>
+            <tr><th>기존 콘텐츠 개선</th><td>월 2건</td><td class="std">월 4건</td><td>월 6건</td></tr>
+            <tr><th>AI 검색 확인 질문</th><td>월 50개</td><td class="std">월 100개</td><td>월 150개</td></tr>
+            <tr><th>경쟁병원 비교</th><td>2곳</td><td class="std">3곳</td><td>5곳</td></tr>
+            <tr><th>외부 전문가 콘텐츠·기사 기획</th><td>–</td><td class="std">월 1건</td><td>월 2건</td></tr>
+            <tr><th>유튜브 영상의 AI 검색용 글 전환</th><td>–</td><td class="std">월 2건</td><td>월 4건</td></tr>
+            <tr><th>월간 보고서</th><td>포함</td><td class="std">포함</td><td>포함 (경영진 요약본 추가)</td></tr>
+            <tr><th>전략 미팅</th><td>분기 1회</td><td class="std">월 1회</td><td>월 1회</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="two">
+        <div>
+          <div class="subhead">공통 포함 항목</div>
+          <ul class="ticks">
+            <li>최초 AI 검색 경쟁력 정밀진단, 분기 1회 재진단</li>
+            <li>AI 검색 기본 세팅 (사이트 정보·페이지 구조·의료진 정보 정리)</li>
+            <li>구글 병원정보(주소·전화·진료시간) 일관성 관리</li>
+            <li>AI 답변 내 병원명 언급·출처 연결·정보 오류 모니터링</li>
+          </ul>
+        </div>
+        <div>
+          <div class="subhead">별도 구축형 상품 (최초 1회)</div>
+          <div class="tbl-wrap">
+            <table>
+              <tbody>
+                <tr><th>AI 검색 정밀진단</th><td class="price">2,000,000원</td></tr>
+                <tr><th>병원 전문정보 허브 구축</th><td class="price">300~700만원</td></tr>
+                <tr><th>홈페이지 기획·개편</th><td class="price">500~800만원</td></tr>
+                <tr><th>최적화 홈페이지 신규 제작</th><td class="price">800~1,500만원+</td></tr>
+                <tr><th>기존 콘텐츠 대량 이전·정리</th><td class="price">별도 견적</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="subhead">진행 프로세스</div>
+        <ol class="process">
+          <li><b>현재 상태 진단</b><span>홈페이지·AI 검색·경쟁병원 현황 확인</span></li>
+          <li><b>전략 미팅</b><span>핵심 진료과목과 우선순위 확정</span></li>
+          <li><b>초기 기반 개선</b><span>홈페이지·병원정보·콘텐츠 구조 정비</span></li>
+          <li><b>월간 운영</b><span>전문 콘텐츠, 외부 신뢰자료, 모니터링</span></li>
+          <li><b>재점검</b><span>경쟁병원 비교, 다음 개선 방향 제안</span></li>
+        </ol>
+      </div>
+
+      <div class="caveat">
+        <p>모든 견적은 VAT 10% 별도입니다. 월 관리 상품은 최소 3개월 계약, 6개월 이상 운영을 권장합니다. 3개월 이상 계약 시 정밀진단 1회가 포함될 수 있습니다.</p>
+        <p>외부 매체 기사 송출비, 별도 홈페이지 개발비, 광고 집행비 등 실비는 별도입니다. AI 답변은 질문·시점·플랫폼에 따라 달라지므로 특정 AI에서의 순위·추천·노출을 보장하지 않습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VI. OPINION + NEXT ===== -->
+  <section class="sheet sec" aria-labelledby="s6">
+    <div class="sec-no">Ⅵ</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <span class="label">리드유 의견</span>
+        <h2 id="s6">AEO·GEO는 지금이 아닌 다음 단계로</h2>
+        <p>AEO·GEO는 의미 있는 흐름이지만, 현재 S라인V라인의원의 환자 유입 구조에는 대체상품이 먼저라고 판단했습니다.</p>
+      </div>
+      <div class="opinion">
+        <div>
+          <h3>천안은 로컬 검색이 결정합니다</h3>
+          <p>천안·아산 환자는 네이버 플레이스와 지역 키워드 블로그로 병원을 찾고 고릅니다. 지방흡입 천안 1위 포지션도 이 채널에서 나왔습니다.</p>
+        </div>
+        <div>
+          <h3>AI 검색은 성과가 늦게 납니다</h3>
+          <p>지역 병원을 AI에 물어보는 비중은 아직 낮아, 같은 예산이라면 로컬 채널보다 퍼포먼스가 떨어질 것으로 전망됩니다.</p>
+        </div>
+        <div>
+          <h3>도입을 검토할 시점</h3>
+          <p>수도권·광역 환자 유치를 목표로 하거나 홈페이지를 개편할 때 함께 시작하면 효과가 큽니다. 먼저 확인해 보시려면 정밀진단 단독 상품도 가능합니다.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="subhead">진행 순서 (확정 시)</div>
+        <ol class="steps">
+          <li><span>회신 즉시</span><div>기자단 신규 발행 중단, 기존 발행분은 민원 발생 시 즉시 비공개 대응 유지</div></li>
+          <li><span>1주 차</span><div>스레드 공식 계정 개설, 첫 달 콘텐츠 캘린더 공유</div></li>
+          <li><span>다음 달 운영분</span><div>스레드 월 20건, 상위노출 블로그 5건 체제로 전환</div></li>
+          <li><span>월말</span><div>월간 보고서에 채널별 성과 비교 포함, 필요 시 배분 조정</div></li>
+        </ol>
+      </div>
+
+      <div class="sign">
+        <div>
+          <div class="label">발신</div>
+          <div class="who">리드유컴퍼니 마케팅팀</div>
+        </div>
+        <span class="label">대체상품 세부 견적은 회신 시 별도 안내드립니다</span>
+      </div>
+    </div>
+  </section>
+
+</main>
