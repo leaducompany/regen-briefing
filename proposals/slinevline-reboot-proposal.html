@@ -211,11 +211,31 @@ ul.ticks.no li::before { background: transparent; border: 1.5px solid var(--stop
 .sign .who { font-family: var(--font-display); font-size: var(--s2); font-weight: 700; }
 .sign .label { color: var(--muted); }
 
+@page { size: A4; margin: 16mm 0 14mm; }
+@page :first { margin: 0; }
 @media print {
-  body { background: #fff; padding: 0; }
+  body { background: var(--sheet); padding: 0; }
   .doc { gap: 0; max-width: none; }
-  .sheet { border: 0; break-after: page; padding: 18mm 16mm; }
-  .sheet:last-child { break-after: auto; }
+  .sheet { border: 0; padding: 0 64px; animation: none; }
+  .sheet + .sheet { padding-top: 64px; }
+  .cover { break-after: page; }
+  .pb { break-before: page; padding-top: 0 !important; }
+  .cover { min-height: 1300px; padding-block: 120px 96px; align-content: space-between; }
+  .tbl-wrap { overflow: visible; }
+  tr, .product-head, .mix, .two > *, .process, .caveat, .option, .facts, .timeline li, .opinion, .steps li, .surg, .sign, .scale { break-inside: avoid; }
+  h2, h3, .subhead, .sec-head { break-after: avoid; }
+  .sec-body { gap: 20px; }
+  .sheet + .sheet { padding-top: 48px; }
+  th, td { padding: 9px 12px; }
+  .decision td, .decision th { padding-block: 12px; }
+  .timeline li { padding: 8px 0; }
+  .product { gap: 16px; padding-top: 22px; }
+  .tiers { break-inside: avoid; }
+  thead { display: table-row-group; }
+  .steps li { padding: 8px 0; }
+  .opinion div { padding-block: 14px; }
+  .sign { padding-top: 0; }
+  .caveat { padding-top: 12px; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .sheet { animation: rise .5s ease-out both; }
@@ -315,7 +335,7 @@ ul.ticks.no li::before { background: transparent; border: 1.5px solid var(--stop
   </section>
 
   <!-- ===== III. ALTERNATIVES ===== -->
-  <section class="sheet sec" aria-labelledby="s3">
+  <section class="sheet sec pb" aria-labelledby="s3">
     <div class="sec-no">Ⅲ</div>
     <div class="sec-body">
       <div class="sec-head">
@@ -489,7 +509,7 @@ ul.ticks.no li::before { background: transparent; border: 1.5px solid var(--stop
   </section>
 
   <!-- ===== VI. OPINION + NEXT ===== -->
-  <section class="sheet sec" aria-labelledby="s6">
+  <section class="sheet sec pb" aria-labelledby="s6">
     <div class="sec-no">Ⅵ</div>
     <div class="sec-body">
       <div class="sec-head">
