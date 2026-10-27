@@ -36,6 +36,14 @@ def cell(lines,bg=None,align=None):
     ex=';text-align:center' if align=='c' else ''
     return (f'<td style="{st}">' if st else '<td>')+''.join(P(x,ex) for x in lines)+'</td>'
 TB='<table>'
+# 파스텔 팔레트 (진한 머리행, 중간 행, 연한 본문) — 표마다 돌려 가며 사용
+PALS=[('#c5d9f2','#dbe8f8','#edf3fc'),('#c3e3d5','#d9eee5','#edf7f2'),('#d6cdea','#e5def2','#f3effa'),
+      ('#f5d3bf','#f9e2d4','#fdf1ea'),('#f1e1a6','#f7ebc4','#fcf6e3'),('#d3e0c4','#e3ebd8','#f2f6ec'),('#efcbd6','#f5dde4','#fbeff3')]
+import zlib
+_pi=[zlib.crc32(sys.argv[3].encode())%len(PALS)]
+def pal():
+    p=PALS[_pi[0]%len(PALS)]; _pi[0]+=1; return p
+CAUTION='#f6d6d6'
 out=[];para=[];i=0
 def flush():
     global para
@@ -59,26 +67,27 @@ while i<len(src):
         kind,bg=m.group(1),m.group(2); flush(); i+=1; rows=[]
         while src[i]!='END': rows.append(src[i]); i+=1
         i+=1
-        if kind=='BOX': out.append(TB+'<tr>'+cell([x for r in rows for x in r.split('⏎')],bg)+'</tr></table>')
+        if kind=='BOX': out.append(TB+'<tr>'+cell([x for r in rows for x in r.split('⏎')],CAUTION if bg=='p' else ('#f3f3f3' if bg=='gr' else pal()[2]))+'</tr></table>')
         elif kind=='SUMMARY':
             title,body=rows[0],rows[1:]
-            out.append(TB+'<tr><td style="background-color:'+BG.get(bg,bg)+'">'
+            out.append(TB+'<tr><td style="background-color:'+pal()[2]+'">'
                        f'<h3 style="text-align:center;line-height:150%;margin:0">{inl(title)}</h3>'+P('')+''.join(P(x) for r in body for x in r.split('⏎'))+'</td></tr></table>')
-        elif kind=='ROWS': out.append(TB+''.join('<tr>'+cell(r.split('⏎'),bg)+'</tr>' for r in rows)+'</table>')
+        elif kind=='ROWS':
+            pm=pal()[1]; out.append(TB+''.join('<tr>'+cell(r.split('⏎'),pm)+'</tr>' for r in rows)+'</table>')
         elif kind=='INFO':  # "label|line⏎line"
-            h=''
+            h=''; pm=pal()[1]
             for r in rows:
                 lab,txt=r.split('|',1)
-                h+='<tr><td style="background-color:'+BG.get(bg,bg)+'">'+f'<h3 style="line-height:150%;margin:0"><b>{inl(lab)}</b></h3>'+''.join(P(x) for x in txt.split('⏎'))+'</td></tr>'
+                h+='<tr><td style="background-color:'+pm+'">'+f'<h3 style="line-height:150%;margin:0"><b>{inl(lab)}</b></h3>'+''.join(P(x) for x in txt.split('⏎'))+'</td></tr>'
             out.append(TB+h+'</table>')
         out.append(BR); continue
     m=re.match(r'GRID(?::(\S+),(\S+))?$',l)
     if m:
         hb,bb=m.group(1),m.group(2); flush(); i+=1; rows=[]
         while src[i]!='END': rows.append(src[i].split('|')); i+=1
-        i+=1; h=''
+        i+=1; h=''; ps=pal()
         for ri,r in enumerate(rows):
-            h+='<tr>'+''.join(cell([f'[[12pt:{c.strip()}]]'] if ri==0 else c.strip().split('⏎'),hb if ri==0 else bb,'c') for c in r)+'</tr>'
+            h+='<tr>'+''.join(cell([f'[[12pt:{c.strip()}]]'] if ri==0 else c.strip().split('⏎'),ps[0] if ri==0 else ps[2],'c') for c in r)+'</tr>'
         out.append(TB+h+'</table>'); out.append(BR); continue
     para.append(l); i+=1
 flush()
