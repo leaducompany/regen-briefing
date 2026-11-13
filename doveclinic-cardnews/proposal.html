@@ -1,0 +1,287 @@
+<title>도브 판독실</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&family=Cormorant+Garamond:wght@600&family=Nanum+Pen+Script&display=swap">
+<style>
+/* 레이아웃: 판독 소견서처럼 좌측 라벨 칼럼 + 본문. 시안 갤러리만 넓게 */
+:root{
+  --bg:#EDF1EF; --surface:#FAFCFB; --fg:#14201C; --muted:#53625C; --line:#C6D1CC;
+  --sage:#3B6B5D; --pen:#D7342A; --mint:#7FE3CF; --marker:#FFE14D; --on-dark:#F2F6F4; --panel:#14201C;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Noto Sans KR",monospace;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --hand:"Nanum Pen Script","Noto Sans KR",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101714; --surface:#17211D; --fg:#E6EEEA; --muted:#9AABA4; --line:#2C3B35;
+  --sage:#86C2AE; --pen:#FF6A5C; --mint:#7FE3CF; --marker:#E9CB3A; --on-dark:#F2F6F4; --panel:#0A0F0D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101714; --surface:#17211D; --fg:#E6EEEA; --muted:#9AABA4; --line:#2C3B35;
+  --sage:#86C2AE; --pen:#FF6A5C; --mint:#7FE3CF; --marker:#E9CB3A; --on-dark:#F2F6F4; --panel:#0A0F0D; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.7;letter-spacing:-.01em;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1080px;margin:0 auto}
+header.top{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:3px solid var(--fg);padding-block:22px 16px;flex-wrap:wrap}
+.wm{font-family:var(--serif);font-weight:600;font-size:28px;letter-spacing:.16em;line-height:.9;text-align:center}
+.wm small{display:block;font-size:10px;letter-spacing:.42em;margin-top:5px}
+.brand{display:flex;align-items:center;gap:16px}
+.brand .rr{border-left:2px solid var(--fg);padding-left:16px;line-height:1.2}
+.brand .rr b{font-size:20px;font-weight:900;display:block}
+.brand .rr span{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--sage)}
+.meta{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:right}
+.hero{padding-block:48px 36px;display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:end}
+.hero h1{font-size:clamp(34px,6vw,60px);line-height:1.12;font-weight:900;letter-spacing:-.05em;margin:0;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--pen)}
+.hero p{margin:18px 0 0;font-size:18px;color:var(--muted);max-width:36em}
+.hero .note{font-family:var(--hand);font-size:34px;color:var(--pen);line-height:1.1;transform:rotate(-3deg);border:3px solid var(--pen);border-radius:16px 24px 12px 26px;padding:14px 20px;justify-self:start}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--sage);font-weight:600;text-transform:uppercase}
+section.sec{display:grid;grid-template-columns:200px minmax(0,1fr);gap:32px;border-top:2px solid var(--fg);padding-block:36px}
+section.sec>.label{position:sticky;top:16px;align-self:start}
+section.sec>.label h2{font-size:22px;font-weight:900;margin:6px 0 0;letter-spacing:-.03em;line-height:1.3}
+.body{min-width:0;display:flex;flex-direction:column;gap:20px}
+.body h3{font-size:20px;font-weight:900;margin:0;letter-spacing:-.03em}
+.body p{margin:0;max-width:44em}
+.quote{border-left:4px solid var(--sage);padding:4px 0 4px 18px;color:var(--fg);font-weight:500}
+.quote small{display:block;color:var(--muted);font-size:13px;font-family:var(--mono);margin-top:4px}
+.hl{background:linear-gradient(transparent 55%,var(--marker) 55%);padding:0 2px;color:inherit}
+:root[data-theme="dark"] .hl{color:#14201C;background:var(--marker)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hl{color:#14201C;background:var(--marker)}}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.panel{background:var(--surface);border:2px solid var(--fg);padding:20px 22px;display:flex;flex-direction:column;gap:8px}
+.panel .tag{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--muted)}
+.panel b{font-size:18px}
+.panel ul{margin:0;padding-left:18px}
+.panel li{margin:2px 0}
+.verdict{display:inline-block;font-size:12px;font-weight:900;padding:2px 8px;border-radius:3px;font-family:var(--sans)}
+.v-bad{background:var(--pen);color:#fff}
+.v-mid{background:var(--line);color:var(--fg)}
+.v-good{background:var(--sage);color:var(--bg)}
+.rules{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:2px solid var(--fg);background:var(--surface)}
+.rules div{padding:18px 16px;border-right:2px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.rules div:last-child{border-right:0}
+.rules .n{font-family:var(--mono);font-size:13px;color:var(--pen);font-weight:600}
+.rules b{font-size:17px;line-height:1.35}
+.rules span{font-size:14px;color:var(--muted);line-height:1.55}
+.tbl{overflow-x:auto;border:2px solid var(--fg);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:680px;font-size:14.5px}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500;border-bottom:2px solid var(--fg)}
+tbody th{font-weight:700;white-space:nowrap}
+td.us{background:color-mix(in srgb,var(--mint) 18%,transparent);font-weight:700}
+tr:last-child th,tr:last-child td{border-bottom:0}
+.gallery{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.gallery figure{margin:0;display:flex;flex-direction:column;gap:6px}
+.gallery button{padding:0;border:2px solid var(--fg);background:var(--surface);cursor:zoom-in;display:block;width:100%}
+.gallery button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.gallery img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.gallery figcaption{font-size:12.5px;color:var(--muted);line-height:1.45}
+.gallery figcaption b{color:var(--fg);font-family:var(--mono);font-size:12px;margin-right:4px}
+.covers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.roadmap{counter-reset:none}
+.road td:first-child{font-family:var(--mono);color:var(--pen);font-weight:600;white-space:nowrap}
+.checks{display:flex;flex-direction:column;border-top:2px solid var(--fg)}
+.checks div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.checks i{width:20px;height:20px;border:2px solid var(--fg);margin-top:4px;display:block}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:2px solid var(--fg);background:var(--surface)}
+.flow div{padding:16px;border-right:2px solid var(--line)}
+.flow div:last-child{border-right:0}
+.flow .who{font-family:var(--mono);font-size:12px;color:var(--sage);font-weight:600;letter-spacing:.06em}
+.flow b{display:block;margin-top:4px}
+.flow span{font-size:14px;color:var(--muted)}
+.dark-panel{background:var(--panel);color:var(--on-dark);padding:24px 26px}
+.dark-panel b{color:var(--mint)}
+.files{font-family:var(--mono);font-size:13px;color:var(--muted)}
+dialog{border:0;padding:0;background:transparent;max-width:min(92vw,560px)}
+dialog::backdrop{background:rgba(10,15,13,.82)}
+dialog img{width:100%;display:block}
+dialog .bar{display:flex;justify-content:space-between;gap:8px;margin-top:10px}
+dialog button{font:600 14px var(--sans);padding:8px 14px;border:2px solid #F2F6F4;background:transparent;color:#F2F6F4;cursor:pointer}
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr}
+  section.sec{grid-template-columns:1fr;gap:16px}
+  section.sec>.label{position:static}
+  .rules{grid-template-columns:1fr}
+  .rules div{border-right:0;border-bottom:2px solid var(--line)}
+  .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2,.covers{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:no-preference){.gallery button{transition:transform .15s}.gallery button:hover{transform:translateY(-2px)}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="brand"><div class="wm">DOVE<small>CLINIC</small></div><div class="rr"><b>도브 판독실</b><span>READING ROOM</span></div></div>
+  <div class="meta">인스타그램 카드뉴스 컨셉 제안 · 2026.11.13</div>
+</header>
+
+<div class="hero">
+  <div>
+    <div class="eyebrow">Concept proposal</div>
+    <h1>뉴스는 누구나 퍼 나릅니다.<br><em>판독</em>은 의사만 할 수 있습니다.</h1>
+    <p>화제가 된 건강·뷰티 이슈를 원장이 원문과 숫자로 직접 읽고, 소견과 판정을 내리는 카드뉴스 시리즈입니다. 바이럴 주제의 조회수는 가져오고, 결론은 병원 채널만 말할 수 있는 방식으로 냅니다.</p>
+  </div>
+  <div class="note">공포 ✕ 체크 ○<br>“미리 겁먹을 필요는 없다”를<br>근거로 말하는 채널</div>
+</div>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">01 · Brief</div><h2>원장님이 요청한 것</h2></div>
+  <div class="body">
+    <p class="quote">“트래픽 잘 나오는 내용을 우회적으로 담고, 미리 걱정할 필요는 없다 이런 식으로 마무리하는 건 어떨까요. 바이럴 + 전문성을 모두 가져가는 주제로요.”<small>김창경 원장 · 10:30</small></p>
+    <p class="quote">“지금 해온 주제들은 다른 곳들도 다 하고 있는 주제이니 … 뚜렷한 마케팅 차별성은 부족하다는 게 솔직한 생각입니다. 병원 채널에서 저런 컨셉은 아직 잘 못 본 것 같아요.”<small>김창경 원장 · 11:55</small></p>
+    <p>정리하면 요구는 세 가지입니다. <span class="hl">① 바이럴 계정 수준의 후킹</span>, <span class="hl">② 병원만 낼 수 있는 의학적 결론</span>, <span class="hl">③ 다른 피부과 계정과 구별되는 형식</span>. 레퍼런스(@mijunow)는 ①은 잘하지만 결론을 내지 않습니다(“인과관계는 미확인”에서 끝남). 이 빈칸이 도브의 자리입니다.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">02 · Diagnosis</div><h2>현재 피드 진단</h2></div>
+  <div class="body">
+    <p>@doveclinic · 게시물 183 · 팔로워 1,151 · 소개 문구 “Define Vitality, Define You”. 피드는 두 가지 형식이 번갈아 올라갑니다.</p>
+    <div class="grid2">
+      <div class="panel"><span class="tag">TRACK A · 원장 출연 릴스 (EP.09–EP.29)</span><b>후킹은 강하지만 말투가 남의 것</b>
+        <ul><li>예산별 시술, 예비부부, 여드름, 기미 토닝 등</li><li>“평생 후회하는 충격적 이유”, “절대 속지 마세요” 같은 문구는 어느 계정에서나 보는 말투이고, 과장 표현으로 볼 소지도 있음</li><li>원장 얼굴이 나오는 것은 큰 자산이라 그대로 살릴 부분</li></ul></div>
+      <div class="panel"><span class="tag">TRACK B · Define Vitality 카드</span><b>시술 브로슈어라 저장할 이유가 약함</b>
+        <ul><li>모델 사진 + “도브의원 X 시술명” + 체크리스트</li><li>다른 피부과의 장비·시술 소개 카드와 구분하기 어려움</li><li>본문 글씨가 작아 피드 썸네일에서 읽히지 않음</li></ul></div>
+    </div>
+    <div class="dark-panel">두 트랙 모두 <b>원장의 ‘판단’이 카드에 남지 않습니다.</b> 영상에서는 원장이 말하지만 카드에는 시술명만 남습니다. 반대로, 피드에 이미 있는 “마운자로 감량 중, 체중계보다 먼저 봐야 할 것은?”, “살은 빠졌는데 얼굴은 왜 더 지쳐 보일까요?”는 비만 → 얼굴 관리로 이어지는 도브만의 연결 고리입니다. 판독실은 이 주제부터 시작합니다.</div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">03 · Concept</div><h2>도브 판독실<br>Reading Room</h2></div>
+  <div class="body">
+    <p>‘판독’은 의사가 영상이나 검사 결과를 읽고 소견을 쓰는 일입니다. 시리즈 전체를 <b>판독 소견서</b> 양식으로 만듭니다. 차트 용지 격자, 판독 번호, 레드펜 표시, 하단 판독의 서명줄이 매번 같은 자리에 들어가서, 피드에서 한눈에 “도브 판독실”로 알아보게 합니다. 모든 회차는 아래 다섯 단계를 지킵니다.</p>
+    <div class="rules">
+      <div><span class="n">STEP 1</span><b>원문 확인</b><span>기사 말고 FDA·식약처·논문 원문을 인용하고 핵심 단어에 레드펜</span></div>
+      <div><span class="n">STEP 2</span><b>숫자 환산</b><span>“위험 n배”를 “10만 명 중 몇 명”으로 바꿔 보여줌</span></div>
+      <div><span class="n">STEP 3</span><b>판독의 소견</b><span>원장 실명·경력과 3~4문장 코멘트. 진료실 언어로</span></div>
+      <div><span class="n">STEP 4</span><b>행동 체크리스트</b><span>저장하고 싶어지는 장. 증상·위험요인·언제 병원에 가야 하는지</span></div>
+      <div><span class="n">STEP 5</span><b>도브 판정</b><span>걱정 지수 1–5 + 3줄 요약. 시리즈를 상징하는 장치</span></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>바이럴 정보 계정 (레퍼런스)</th><th>일반 피부과 계정 (현재 피드 포함)</th><th>도브 판독실</th></tr></thead>
+      <tbody>
+        <tr><th>주제</th><td>화제 뉴스</td><td>자기 병원 시술</td><td class="us">화제 뉴스, 단 도브 진료 영역과 맞닿은 것</td></tr>
+        <tr><th>근거</th><td>기사 요약</td><td>장비 스펙·효과 나열</td><td class="us">1차 원문 인용 + 절대위험 숫자</td></tr>
+        <tr><th>결론</th><td>“인과관계 미확인” <span class="verdict v-mid">결론 없음</span></td><td>“상담받으세요”</td><td class="us">걱정 지수 판정 + 행동 지침 <span class="verdict v-good">결론 있음</span></td></tr>
+        <tr><th>화자</th><td>익명 운영자</td><td>병원 브랜드</td><td class="us">판독의 김창경 (실명·경력)</td></tr>
+        <tr><th>저장·공유 이유</th><td>놀라서 공유</td><td>약함</td><td class="us">체크리스트 저장, “이거 봐” 공유</td></tr>
+        <tr><th>의료광고 리스크</th><td>해당 없음</td><td>시술 홍보로 읽힘 <span class="verdict v-bad">높음</span></td><td class="us">정보 제공형, 제품명·가격 없음 <span class="verdict v-good">낮음</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">04 · Sample</div><h2>시안 No.001<br>10장 캐러셀</h2></div>
+  <div class="body">
+    <p>주제: 2026년 11월 9일 FDA의 GLP-1 계열 시력(NAION) 경고. 레퍼런스와 같은 뉴스로, 같은 조회수를 노리되 결론까지 내는 버전입니다. 수치는 모두 FDA 안전성 공지 원문에서 가져왔습니다. 이미지를 누르면 크게 볼 수 있습니다.</p>
+    <div class="gallery" id="gallery">
+      <figure><button type="button" data-i="0"><img src="img/card_01.png" alt="1. 표지: 비만 주사에 시력 상실 경고, 지금 끊어야 할까" loading="lazy"></button><figcaption><b>01</b>표지 · 시력표 + 판독 도장</figcaption></figure>
+      <figure><button type="button" data-i="1"><img src="img/card_02.png" alt="2. 사건 개요" loading="lazy"></button><figcaption><b>02</b>사건 개요 · 성분명 표기</figcaption></figure>
+      <figure><button type="button" data-i="2"><img src="img/card_03.png" alt="3. NAION 질환 설명" loading="lazy"></button><figcaption><b>03</b>질환 설명 · 해부 도식</figcaption></figure>
+      <figure><button type="button" data-i="3"><img src="img/card_04.png" alt="4. FDA 원문 확인" loading="lazy"></button><figcaption><b>04</b>원문 확인 · ‘potential’</figcaption></figure>
+      <figure><button type="button" data-i="4"><img src="img/card_05.png" alt="5. 임상시험 숫자 판독" loading="lazy"></button><figcaption><b>05</b>숫자 판독 · 6.4 vs 3.8</figcaption></figure>
+      <figure><button type="button" data-i="5"><img src="img/card_06.png" alt="6. 실사용 데이터" loading="lazy"></button><figcaption><b>06</b>실사용 데이터 · 위험비</figcaption></figure>
+      <figure><button type="button" data-i="6"><img src="img/card_07.png" alt="7. 판독의 소견" loading="lazy"></button><figcaption><b>07</b>판독의 소견 · 원장 검수</figcaption></figure>
+      <figure><button type="button" data-i="7"><img src="img/card_08.png" alt="8. 증상 체크리스트" loading="lazy"></button><figcaption><b>08</b>증상 체크 · 저장용</figcaption></figure>
+      <figure><button type="button" data-i="8"><img src="img/card_09.png" alt="9. 위험요인" loading="lazy"></button><figcaption><b>09</b>위험요인 · 상담 연결</figcaption></figure>
+      <figure><button type="button" data-i="9"><img src="img/card_10.png" alt="10. 도브 판정" loading="lazy"></button><figcaption><b>10</b>도브 판정 · 출처·고지</figcaption></figure>
+    </div>
+    <h3>같은 틀로 다른 주제를 찍으면</h3>
+    <p>시리즈가 쌓였을 때 피드에서 어떻게 보이는지 확인할 수 있도록 표지 2종을 같이 만들었습니다. 리프팅·스킨케어 주제도 같은 판독지 양식에 들어갑니다.</p>
+    <div class="covers">
+      <figure style="margin:0" class="gallery-like"><div class="gallery" style="grid-template-columns:1fr"><figure><button type="button" data-i="0"><img src="img/card_01.png" alt="No.001 표지" loading="lazy"></button><figcaption><b>No.001</b>GLP-1 시력 경고</figcaption></figure></div></figure>
+      <figure style="margin:0"><div class="gallery" style="grid-template-columns:1fr"><figure><button type="button" data-i="10"><img src="img/series_cover_No002.png" alt="No.002 표지: 리프팅 샷 수, 많을수록 좋을까" loading="lazy"></button><figcaption><b>No.002</b>리프팅 샷 수</figcaption></figure></div></figure>
+      <figure style="margin:0"><div class="gallery" style="grid-template-columns:1fr"><figure><button type="button" data-i="11"><img src="img/series_cover_No003.png" alt="No.003 표지: 선크림 유해성분 뉴스, 내 것도" loading="lazy"></button><figcaption><b>No.003</b>선크림 성분 뉴스</figcaption></figure></div></figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">05 · Brand</div><h2>기존 브랜드와의 연결</h2></div>
+  <div class="body">
+    <div class="grid2">
+      <div class="panel"><span class="tag">그대로 가져온 것</span><ul><li>DOVE CLINIC 세리프 워드마크</li><li>“Define Vitality” 태그라인 (하단 서명줄)</li><li>로고의 세이지 그린, 릴스 EP 라벨의 민트 알약 모양</li></ul></div>
+      <div class="panel"><span class="tag">새로 더한 것</span><ul><li>차트 용지 격자 + 판독 번호 (No.001~)</li><li>레드펜 손글씨 = 원장의 판단 표시</li><li>판독 도장, 걱정 지수 게이지</li></ul></div>
+    </div>
+    <p><b>릴스와 짝 맞추기.</b> 같은 주제를 릴스 EP로도 찍고, 영상 끝에 “근거는 판독실 카드에” 한 줄을 넣습니다. 릴스는 도달, 카드는 저장과 신뢰를 맡습니다. 7번 장의 이니셜 원은 릴스 속 원장 사진으로 바꾸면 됩니다.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">06 · Roadmap</div><h2>다음 판독 후보</h2></div>
+  <div class="body">
+    <p>기준은 두 가지입니다. 지금 사람들이 불안해하는 뉴스일 것, 그리고 도브의 진료 영역(비만·리프팅·피부)과 맞닿을 것. 각 회차의 사실관계는 제작 시점에 원문으로 다시 확인합니다.</p>
+    <div class="tbl"><table class="road">
+      <thead><tr><th>No.</th><th>표지 질문</th><th>판독 포인트</th><th>도브 진료와의 연결</th></tr></thead>
+      <tbody>
+        <tr><td>001</td><td>비만 주사에 ‘시력 상실’ 경고, 지금 끊어야 할까?</td><td>FDA 원문, 10만 인년당 숫자</td><td>비만 진료</td></tr>
+        <tr><td>002</td><td>리프팅 ‘샷 수’, 많을수록 좋을까?</td><td>샷·J·깊이(mm) 단위 읽는 법</td><td>리프팅 (울쎄라·티타늄)</td></tr>
+        <tr><td>003</td><td>선크림 ‘유해성분’ 뉴스, 내 것도?</td><td>규제 기준 vs 실제 노출량</td><td>기미·색소</td></tr>
+        <tr><td>004</td><td>살 빠지면 얼굴이 늙는다? ‘○○ 페이스’의 진실</td><td>감량 속도와 볼륨 변화 연구</td><td>비만 → 리프팅·스킨부스터</td></tr>
+        <tr><td>005</td><td>보톡스 계속 맞으면 내성 생긴다?</td><td>중화항체 발생 빈도 데이터</td><td>보톡스·승모근</td></tr>
+        <tr><td>006</td><td>스킨부스터 ‘콜라겐 n배’ 광고, 어디까지 믿을까?</td><td>세포 실험과 사람 임상의 차이</td><td>리쥬란·쥬브아셀</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">07 · Operation</div><h2>운영 방식</h2></div>
+  <div class="body">
+    <div class="flow">
+      <div><span class="who">D-0 · 대행</span><b>이슈 포착</b><span>후보 2개 원장 공유</span></div>
+      <div><span class="who">D+1 · 대행</span><b>원문·숫자 정리</b><span>1~6, 8~10장 초안</span></div>
+      <div><span class="who">D+1 · 원장 10분</span><b>소견·판정</b><span>7장 문구, 걱정 지수만</span></div>
+      <div><span class="who">D+2 · 대행</span><b>발행</b><span>릴스 EP와 같은 주 발행</span></div>
+    </div>
+    <p>원장님 부담은 7번 장 소견 3~4문장과 판정 숫자 하나로 줄입니다. 이슈가 생긴 뒤 48시간 안에 내야 바이럴 계정과 같은 타이밍을 탈 수 있습니다. 10번 장의 “다음 판독 의뢰는 댓글로”는 댓글을 다음 주제 후보로 쓰는 장치입니다.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">08 · Compliance</div><h2>병원 채널 안전장치</h2></div>
+  <div class="body">
+    <p>바이럴 계정과 달리 병원 계정은 의료법·약사법 적용을 받습니다. 시안에는 아래를 반영했고, 발행 전 체크리스트로 씁니다.</p>
+    <div class="checks">
+      <div><i></i><span><b>제품명 대신 성분명.</b> 위고비·마운자로 등 전문의약품 상표는 대중 광고가 제한되므로 표지와 본문에서 성분·계열명으로 표기했습니다. 현재 피드의 “마운자로 감량 중…” 카드도 점검을 권합니다.</span></div>
+      <div><i></i><span><b>과장·공포 표현 지양.</b> “평생 후회”, “충격적 이유” 같은 문구 대신 질문형 표지와 숫자를 씁니다.</span></div>
+      <div><i></i><span><b>가격·이벤트·전후 사진·체험담 없음.</b> 판독실은 정보 콘텐츠로만 운영합니다.</span></div>
+      <div><i></i><span><b>출처와 고지 문구를 마지막 장에 고정.</b> 원문 링크는 캡션에도 넣습니다.</span></div>
+      <div><i></i><span><b>자격 표기는 실제 면허·학회 정보와 일치.</b> 경력 문구는 원장님 확인 후 확정합니다.</span></div>
+      <div><i></i><span><b>사전심의 대상 여부 확인.</b> 인스타그램 게시물이 의료광고 사전심의 대상에 해당하는지 발행 전에 확인합니다.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="label"><div class="eyebrow">09 · To confirm</div><h2>원장님 확인 필요</h2></div>
+  <div class="body">
+    <div class="checks">
+      <div><i></i><span>7번 장 소견 문구 (현재는 대행 초안이며 “원장 검수용” 표시가 붙어 있음)</span></div>
+      <div><i></i><span>7번 장에 넣을 원장 사진, 경력 표기 (고려대 의대 졸업, 대한비만건강학회 정회원으로 넣어둠)</span></div>
+      <div><i></i><span>판독실을 기존 Define Vitality 카드와 병행할지, 대체할지</span></div>
+    </div>
+    <p class="files">원본 파일: doveclinic-cardnews/png (1080×1350 PNG 12장) · doveclinic-cardnews/source/slides.html (수정용 원본)</p>
+  </div>
+</section>
+</div>
+
+<dialog id="lb" aria-label="카드 크게 보기">
+  <img id="lbImg" src="" alt="">
+  <div class="bar"><button type="button" id="prev">이전</button><button type="button" id="close">닫기</button><button type="button" id="next">다음</button></div>
+</dialog>
+<script>
+(function(){
+  var srcs=["card_01","card_02","card_03","card_04","card_05","card_06","card_07","card_08","card_09","card_10","series_cover_No002","series_cover_No003"].map(function(n){return "img/"+n+".png"});
+  var lb=document.getElementById("lb"),img=document.getElementById("lbImg"),cur=0;
+  function show(i){cur=(i+srcs.length)%srcs.length;img.src=srcs[cur];img.alt="카드 "+(cur+1);}
+  document.querySelectorAll("button[data-i]").forEach(function(b){b.addEventListener("click",function(){show(+b.dataset.i);if(lb.showModal)lb.showModal();});});
+  document.getElementById("prev").onclick=function(){show(cur-1)};
+  document.getElementById("next").onclick=function(){show(cur+1)};
+  document.getElementById("close").onclick=function(){lb.close()};
+  lb.addEventListener("click",function(e){if(e.target===lb)lb.close();});
+  document.addEventListener("keydown",function(e){if(!lb.open)return;if(e.key==="ArrowRight")show(cur+1);if(e.key==="ArrowLeft")show(cur-1);});
+})();
+</script>
