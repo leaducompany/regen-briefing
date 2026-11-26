@@ -44,53 +44,139 @@ _pi=[zlib.crc32(sys.argv[3].encode())%len(PALS)]
 def pal():
     p=PALS[_pi[0]%len(PALS)]; _pi[0]+=1; return p
 CAUTION='#f6d6d6'
-out=[];para=[];i=0
+# ---- 1) 원고 → 토큰 ----
+J7_OLD=('밀착 상담하는 것이','[[오래 믿고 찾아주시는 ]]','[[<신뢰 있는 병원>이 되는 길이라고 생각합니다. ^^]]')
+toks=[];para=[];i=0
+def isurl(x): return re.fullmatch(r'https?://\S+',x.strip()) is not None
 def flush():
     global para
-    if para: out.append(''.join(P(l) for l in para)); out.append(BR); para=[]
+    if not para: return
+    ls=[x for x in para if x.strip()!='[네이버 예약 바로가기 버튼]']
+    para=[]
+    if not ls: return
+    if all(x.startswith('{{q:>') or x.startswith('{{i:>') for x in ls): toks.append(('quote',ls)); return
+    if len(ls)==1 and ls[0].startswith('[[네이버 클립 삽입]]'):
+        toks.append(('clip',ls[0][len('[[네이버 클립 삽입]]'):].strip())); return
+    # J7 문구 (김민 대리 최종본 261126)
+    for k in range(len(ls)-2):
+        if tuple(ls[k:k+3])==J7_OLD: ls[k:k+3]=['밀착 상담하는 것이 [[오래 믿고 찾아주시는]]','[[<신뢰할 수 있는 병원>이 되는 길이라고 생각합니다. ^^]]']; break
+    body=[x for x in ls if not isurl(x)]; urls=[x for x in ls if isurl(x)]
+    if body: toks.append(('para',body))
+    for u in urls: toks.append(('url',u))
 while i<len(src):
     l=src[i]
     if l.strip()=='': flush(); i+=1; continue
-    if l.startswith('TITLE:'): out.append(f'<h1 style="line-height:150%">{inl(l[6:].strip())}</h1>'); i+=1; continue
-    if l=='HR': flush(); out.append('<hr>'); i+=1; continue
-    if l=='IMG': flush(); out.append(P('[image]')); i+=1; continue
-    if l.startswith('BIG:'):  # bold 13pt line
-        flush(); out.append(P(f'[[13pt:{l[4:].strip()}]]')); out.append(BR); i+=1; continue
-    if l.startswith('H3C:'): flush(); out.append(f'<h3 style="text-align:center;line-height:150%"><span style="font-size:14pt;font-weight:700">{inl(l[4:].strip())}</span></h3>'); i+=1; continue
-    if l.startswith('H3:'): flush(); out.append(f'<h3 style="line-height:150%">{inl(l[3:].strip())}</h3>'); i+=1; continue
-    if l.startswith('Q:'):
-        flush(); qs=l[2:].strip().split('⏎')
-        out.append(TB+'<tr><td>'+''.join(f'<h2 style="line-height:100%;margin:0">{inl(q)}</h2>' for q in qs)+'</td></tr></table>'); out.append(BR)
-        i+=1; continue
+    if l.startswith('TITLE:'): toks.append(('title',l[6:].strip())); i+=1; continue
+    if l=='HR':
+        flush()
+        if i+1<len(src) and src[i+1]=='IMG': toks.append(('hrimg',None)); i+=2
+        else: toks.append(('hr',None)); i+=1
+        continue
+    if l=='IMG': flush(); toks.append(('img',None)); i+=1; continue
+    if l.startswith('BIG:'): flush(); toks.append(('big',l[4:].strip())); i+=1; continue
+    if l.startswith('H3C:'): flush(); toks.append(('h3c',l[4:].strip())); i+=1; continue
+    if l.startswith('H3:'): flush(); toks.append(('h3',l[3:].strip())); i+=1; continue
+    if l.startswith('Q:'): flush(); toks.append(('q',l[2:].strip().split('⏎'))); i+=1; continue
     m=re.match(r'(BOX|ROWS|INFO|SUMMARY)(?::(\S+))?$',l)
     if m:
         kind,bg=m.group(1),m.group(2); flush(); i+=1; rows=[]
         while src[i]!='END': rows.append(src[i]); i+=1
         i+=1
-        if kind=='BOX': out.append(TB+'<tr>'+cell([x for r in rows for x in r.split('⏎')],CAUTION if bg=='p' else ('#f3f3f3' if bg=='gr' else pal()[2]))+'</tr></table>')
-        elif kind=='SUMMARY':
-            title,body=rows[0],rows[1:]
-            out.append(TB+'<tr><td style="background-color:'+pal()[2]+'">'
-                       f'<h3 style="text-align:center;line-height:150%;margin:0">{inl(title)}</h3>'+P('')+''.join(P(x) for r in body for x in r.split('⏎'))+'</td></tr></table>')
-        elif kind=='ROWS':
-            pm=pal()[1]; out.append(TB+''.join('<tr>'+cell(r.split('⏎'),pm)+'</tr>' for r in rows)+'</table>')
-        elif kind=='INFO':  # "label|line⏎line"
-            h=''; pm=pal()[1]
-            for r in rows:
-                lab,txt=r.split('|',1)
-                h+='<tr><td style="background-color:'+pm+'">'+f'<h3 style="line-height:150%;margin:0"><b>{inl(lab)}</b></h3>'+''.join(P(x) for x in txt.split('⏎'))+'</td></tr>'
-            out.append(TB+h+'</table>')
-        out.append(BR); continue
+        k=kind.lower()
+        if kind=='BOX': k='box_p' if bg=='p' else ('box_link' if any(isurl(r) for r in rows) else 'box')
+        toks.append((k,(rows,bg))); continue
     m=re.match(r'GRID(?::(\S+),(\S+))?$',l)
     if m:
-        hb,bb=m.group(1),m.group(2); flush(); i+=1; rows=[]
+        flush(); i+=1; rows=[]
         while src[i]!='END': rows.append(src[i].split('|')); i+=1
-        i+=1; h=''; ps=pal()
-        for ri,r in enumerate(rows):
-            h+='<tr>'+''.join(cell([f'[[12pt:{c.strip()}]]'] if ri==0 else c.strip().split('⏎'),ps[0] if ri==0 else ps[2],'c') for c in r)+'</tr>'
-        out.append(TB+h+'</table>'); out.append(BR); continue
+        i+=1; toks.append(('grid',rows)); continue
     para.append(l); i+=1
 flush()
+# 인사말 '안녕하세요.' 분리
+for k,(kind,v) in enumerate(toks):
+    if kind=='para' and v[0].strip()=='안녕하세요.' and len(v)>1:
+        toks[k:k+1]=[('para',[v[0]]),('greet',v[1:])]; break
+# ---- 2) 토큰 렌더링 ----
+def render(kind,v):
+    if kind=='title': return f'<h1 style="line-height:150%">{inl(v)}</h1>'
+    if kind=='hrimg': return '<hr>'+P('[image]')
+    if kind=='hr': return '<hr>'
+    if kind=='hrline': return '<hr>'+P('')
+    if kind=='img': return P('[image]')
+    if kind in ('para','greet','quote'): return ''.join(P(x) for x in v)
+    if kind=='url': return P(v)
+    if kind=='clip': return P('[[네이버 클립 삽입]] ')+f'<p><a href="{html.escape(v)}" style="color:#1155cc">{html.escape(v)}</a></p>'
+    if kind=='big': return P(f'[[13pt:{v}]]')
+    if kind=='h3c': return f'<h3 style="text-align:center;line-height:150%"><span style="font-size:14pt;font-weight:700">{inl(v)}</span></h3>'
+    if kind=='h3': return f'<h3 style="line-height:150%">{inl(v)}</h3>'
+    if kind=='q': return TB+'<tr><td>'+''.join(f'<h2 style="line-height:100%;margin:0">{inl(q)}</h2>' for q in v)+'</td></tr></table>'
+    if kind=='summary':
+        rows=v[0]; title,body=rows[0],rows[1:]; parts=[]
+        for n,r in enumerate(body):
+            if n: parts.append(P(''))
+            parts+= [P(x) for x in r.split('⏎')]
+        return TB+'<tr><td style="background-color:'+pal()[2]+f'"><h3 style="text-align:center;line-height:150%;margin:0">{inl(title)}</h3>'+P('')+''.join(parts)+'</td></tr></table>'
+    if kind=='box_p':
+        parts=[]
+        for n,r in enumerate(v[0]):
+            if n: parts.append(P('',';text-align:center'))
+            parts+=[P(x,';text-align:center') for x in r.split('⏎')]
+        return TB+'<tr><td style="background-color:'+CAUTION+'">'+''.join(parts)+'</td></tr></table>'
+    if kind=='box_link':
+        rows=v[0]; desc=[x for r in rows if not isurl(r) for x in r.split('⏎')]; us=[r for r in rows if isurl(r)]
+        return TB+'<tr><td style="background-color:'+pal()[2]+'">'+''.join(P(x) for x in desc)+P('')+''.join(P(u) for u in us)+'</td></tr></table>'
+    if kind=='box':
+        rows,bg=v; return TB+'<tr>'+cell([x for r in rows for x in r.split('⏎')],'#f3f3f3' if bg=='gr' else pal()[2])+'</tr></table>'
+    if kind=='rows':
+        pm=pal()[1]; return TB+''.join('<tr>'+cell(r.split('⏎'),pm)+'</tr>' for r in v[0])+'</table>'
+    if kind=='info':
+        h=''; pm=pal()[1]
+        for r in v[0]:
+            lab,txt=r.split('|',1)
+            h+='<tr><td style="background-color:'+pm+'">'+f'<h3 style="line-height:150%;margin:0"><b>{inl(lab)}</b></h3>'+''.join(P(x) for x in txt.split('⏎'))+'</td></tr>'
+        return TB+h+'</table>'
+    if kind=='grid':
+        h=''; ps=pal()
+        for ri,r in enumerate(v):
+            h+='<tr>'+''.join(cell([f'[[12pt:{c.strip()}]]'] if ri==0 else c.strip().split('⏎'),ps[0] if ri==0 else ps[2],'c') for c in r)+'</tr>'
+        return TB+h+'</table>'
+    raise ValueError(kind)
+# ---- 3) 간격 규칙 (261126 김민 대리 최종 업로드 형태: 19편 기준) ----
+TABLES={'grid','rows','info','box','box_link'}
+def txt(t): return ' '.join(t[1]) if isinstance(t[1],list) else str(t[1])
+def gap(a,b,nxt):
+    ka,kb=a[0],b[0]
+    if ka=='title': return []
+    if ka=='hrimg': return ['B'] if kb in ('summary','q') else ['B','B']
+    if kb=='hrimg': return ['B']
+    if ka=='greet' and kb=='quote': return ['B','HR']
+    if ka=='quote' and kb=='quote': return ['B','B']
+    if ka=='quote' and txt(a).startswith('{{q:>') and kb=='para' and intro_q[0]: intro_q[0]=False; return ['HR','B']
+    if ka=='para' and kb=='big' and b[1].startswith('중요한 건'): return ['B','HR']
+    if ka=='quote' and kb=='h3': return ['HR','B','B']
+    if ka=='rows' and kb=='para' and txt(b).startswith('그리고 한 가지 더'): return ['HR','B']
+    if ka=='para' and '신뢰할 수 있는 병원' in txt(a) and kb=='img': return ['B','HR','B']
+    if ka in TABLES and kb=='img': return ['B']
+    if ka=='img' or kb=='img': return ['B','B']
+    if ka=='q': return ['B']
+    if kb in TABLES: return ['B']
+    if ka=='box_link': return ['B','B']
+    if ka in TABLES: return ['B']
+    if kb in ('url','clip') or ka in ('url','clip'): return ['B']
+    if ka=='box_p': return ['B']
+    if kb=='hr' and nxt and nxt[0]=='h3c': return []
+    if ka=='hr' and kb=='h3c': return []
+    if ka=='h3c': return ['B']
+    if kb=='box_p': return ['B']
+    return ['B','B']
+intro_q=[True]
+out=[]
+for n,t in enumerate(toks):
+    if n:
+        for g in gap(toks[n-1],t,toks[n+1] if n+1<len(toks) else None):
+            out.append(P('') if g=='B' else render('hrline',None))
+    if t[0]=='hrimg' and n and toks[n-1][0]=='title': pass
+    out.append(render(*t))
 title=sys.argv[3]
 doc=f'<!DOCTYPE html>\n<html><head><meta charset="utf-8"><title>{title}</title><style>p{{line-height:150%;margin:0}} table{{border-collapse:collapse;width:468pt}} td{{border:0.75pt solid #999999;padding:4.5pt;vertical-align:top}} h1,h3{{line-height:150%}}</style></head><body>\n'+'\n'.join(out)+'\n</body></html>\n'
 open(sys.argv[2],'w',encoding='utf-8').write(doc)
